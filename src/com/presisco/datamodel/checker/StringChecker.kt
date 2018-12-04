@@ -1,10 +1,10 @@
 package com.presisco.datamodel.checker
 
 open class StringChecker(
-        private val size: IntRange,
-        private val nullable: Boolean = false,
-        private val regexStr: String = "",
-        private val default: String = ""
+        val size: IntRange,
+        val nullable: Boolean = false,
+        val regexStr: String = "",
+        val default: String = ""
 ) : Checker<String?>() {
     private val regex = regexStr.toRegex()
 

@@ -2,10 +2,10 @@ package com.presisco.datamodel.checker
 
 
 open class ComparableChecker<T>(
-        private val min: Comparable<T>,
-        private val max: Comparable<T>,
-        private val nullable: Boolean = false,
-        private val default: Comparable<T> = max
+        val min: Comparable<T>,
+        val max: Comparable<T>,
+        val nullable: Boolean = false,
+        val default: Comparable<T> = max
 ) : Checker<Comparable<T>?>() {
     override fun check(item: Comparable<T>?): Boolean {
         if (item == null)
