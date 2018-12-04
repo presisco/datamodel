@@ -2,7 +2,7 @@ package com.presisco.datamodel.checker
 
 class FlatMapChecker(
         vararg checkers: Pair<String, Checker<*>>
-) : Checker<Map<String, *>> {
+) : Checker<Map<String, *>>() {
     private val checkerMap = mutableMapOf<String, Checker<*>>()
 
     init {
@@ -17,5 +17,16 @@ class FlatMapChecker(
         return true
     }
 
-    override fun checkAny(item: Any?) = check(item as Map<String, *>)
+    override fun trim(item: Map<String, *>): Map<String, *> {
+        val trimmedMap = mutableMapOf<String, Any?>()
+        for ((key, value) in item) {
+            val checker = checkerMap[key]!!
+            trimmedMap[key] = if (!checker.checkAny(value)) {
+                checker.trimAny(value)
+            } else {
+                value
+            }
+        }
+        return trimmedMap
+    }
 }

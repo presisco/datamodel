@@ -1,7 +1,11 @@
 package com.presisco.datamodel.checker
 
-interface Checker<T> {
-    fun check(item: T): Boolean
+abstract class Checker<T> {
+    abstract fun check(item: T): Boolean
 
-    fun checkAny(item: Any?): Boolean
+    fun checkAny(item: Any?) = check(item as T)
+
+    abstract fun trim(item: T): T
+
+    fun trimAny(item: Any?) = trim(item as T)
 }
