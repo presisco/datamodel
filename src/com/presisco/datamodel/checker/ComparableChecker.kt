@@ -1,6 +1,6 @@
 package com.presisco.datamodel.checker
 
-class ComparableChecker<T>(
+open class ComparableChecker<T>(
         private val min: Comparable<T>,
         private val max: Comparable<T>
 ) : Checker<Comparable<T>>() {

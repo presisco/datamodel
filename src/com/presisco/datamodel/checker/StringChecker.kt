@@ -1,6 +1,6 @@
 package com.presisco.datamodel.checker
 
-class StringChecker(
+open class StringChecker(
         private val size: IntRange,
         private val nullable: Boolean = false,
         private val regexStr: String = "",

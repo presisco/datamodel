@@ -1,6 +1,6 @@
 package com.presisco.datamodel.checker
 
-class FlatMapChecker(
+open class FlatMapChecker(
         vararg checkers: Pair<String, Checker<*>>
 ) : Checker<Map<String, *>>() {
     private val checkerMap = mutableMapOf<String, Checker<*>>()
