@@ -20,6 +20,7 @@ class CheckerTest {
     fun stringCheckerTest() {
         expect(true) { StringChecker(0..10, true).check(null) }
         expect(false) { StringChecker(0..10, false).check(null) }
+        expect(false) { StringChecker(0..10, false).checkAny(null) }
         expect(false) { StringChecker(5..10, false).check("a") }
         expect(false) { StringChecker(5..10, false).check("aaaaaaaaaaa") }
         expect(false) { StringChecker(0..4, false).check("中文测试") }
@@ -35,6 +36,17 @@ class CheckerTest {
                 "age" to 18
         )
 
+        val undefinedSample = mapOf(
+                "name" to "james",
+                "age" to 18,
+                "sex" to "male"
+        )
+
+        val lackSample = mapOf(
+                "name" to "james",
+                "sex" to "male"
+        )
+
         val identityChecker = FlatMapChecker(
                 "name" to StringChecker(0..4, false),
                 "age" to ComparableChecker(0, 90)
@@ -42,5 +54,8 @@ class CheckerTest {
 
         expect(false) { identityChecker.check(sampleMap) }
         expect("jame") { identityChecker.trimAny(sampleMap)["name"] }
+        expect(false) { identityChecker.check(undefinedSample) }
+        expect(false) { identityChecker.check(lackSample) }
+        expect(mapOf("name" to "", "age" to 90)) { identityChecker.default() }
     }
 }

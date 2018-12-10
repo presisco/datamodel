@@ -15,7 +15,7 @@ open class ComparableChecker<T>(
 
     override fun trim(item: Comparable<T>?): Comparable<T> {
         return if (item == null) {
-            default
+            default()
         } else if (item > max as T) {
             max
         } else if (item < min as T) {
@@ -24,4 +24,6 @@ open class ComparableChecker<T>(
             item
         }
     }
+
+    override fun default() = default
 }

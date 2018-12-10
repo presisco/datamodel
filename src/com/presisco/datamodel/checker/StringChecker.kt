@@ -28,7 +28,7 @@ open class StringChecker(
             return if (nullable) {
                 item
             } else {
-                default
+                default()
             }
         }
 
@@ -38,9 +38,11 @@ open class StringChecker(
         }
 
         if (regexStr.isNotEmpty() && !regex.matches(item)) {
-            return default
+            return default()
         }
 
         return item
     }
+
+    override fun default() = default
 }
