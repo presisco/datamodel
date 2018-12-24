@@ -8,19 +8,34 @@ open class StringChecker(
 ) : Checker<String?>() {
     private val regex = regexStr.toRegex()
 
-    override fun check(item: String?): Boolean {
+    override fun check(item: String?): Pair<Boolean, String> {
+        val isValid: Boolean
+        val message: String
+
         if (item == null) {
-            return nullable
+            if (nullable) {
+                isValid = true
+                message = ""
+            } else {
+                isValid = false
+                message = "is null"
+            }
+        } else {
+            val rawLength = item.toByteArray().size
+            if (rawLength !in size) {
+                isValid = false
+                message = "not in range"
+            } else {
+                if (regexStr.isNotEmpty() && !regex.matches(item)) {
+                    isValid = false
+                    message = "bad format"
+                } else {
+                    isValid = true
+                    message = ""
+                }
+            }
         }
-
-        val rawLength = item.toByteArray().size
-        if (rawLength !in size)
-            return false
-
-        if (regexStr.isNotEmpty() && !regex.matches(item))
-            return false
-
-        return true
+        return Pair(isValid, message)
     }
 
     override fun trim(item: String?): String? {

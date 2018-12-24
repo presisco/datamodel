@@ -9,19 +9,28 @@ open class FlatMapChecker(
         checkerMap.putAll(checkers)
     }
 
-    override fun check(item: Map<String, *>) = checkWithError(item).isEmpty()
+    override fun check(item: Map<String, *>): Pair<Boolean, String> {
+        val errors = checkWithError(item)
+        return if (errors.isEmpty()) {
+            Pair(true, "")
+        } else {
+            Pair(false, errors.toString())
+        }
+    }
 
-    fun checkWithError(item: Map<String, *>): Set<Error> {
-        val errors = mutableSetOf<Error>()
+    fun checkWithError(item: Map<String, *>): Set<Pair<String, String>> {
+        val errors = mutableSetOf<Pair<String, String>>()
 
         for ((key, value) in item) {
             checkerMap[key]?.let {
-                if (!it.checkAny(value))
-                    errors.add(Error.FORMAT)
-            } ?: errors.add(Error.UNDEFINED)
+                val result = it.checkAny(value)
+                if (!result.first)
+                    errors.add(Pair(key, result.second))
+            } ?: errors.add(Pair(key, "undefined"))
         }
-        if (lackKeys(item)) {
-            errors.add(Error.LACK)
+        val absent = absentKeys(item)
+        if (absent.isNotEmpty()) {
+            errors.addAll(absent.map { Pair(it, "absent") })
         }
         return errors
     }
@@ -30,7 +39,7 @@ open class FlatMapChecker(
         val trimmedMap = hashMapOf<String, Any?>()
         for ((key, value) in item) {
             checkerMap[key]?.let {
-                trimmedMap[key] = if (!it.checkAny(value)) {
+                trimmedMap[key] = if (!it.checkAny(value).first) {
                     it.trimAny(value)
                 } else {
                     value
@@ -58,7 +67,7 @@ open class FlatMapChecker(
         return trimmedMap
     }
 
-    fun fillLackedKeys(item: Map<String, *>): Map<String, *> {
+    fun fillAbsentKeys(item: Map<String, *>): Map<String, *> {
         val trimmedMap = hashMapOf<String, Any?>()
 
         checkerMap.keys.forEach {
@@ -72,19 +81,15 @@ open class FlatMapChecker(
         return trimmedMap
     }
 
-    open fun lackKeys(item: Map<String, *>): Boolean {
+    open fun absentKeys(item: Map<String, *>): Set<String> {
         val definedKeys = checkerMap.keys
         val itemKeys = item.keys
-        return definedKeys.minus(itemKeys).isNotEmpty()
+        return definedKeys.minus(itemKeys)
     }
 
     open fun hasUndefinedKeys(item: Map<String, *>): Boolean {
         val definedKeys = checkerMap.keys
         val itemKeys = item.keys
         return itemKeys.minus(definedKeys).isNotEmpty()
-    }
-
-    companion object {
-        enum class Error { NONE, UNDEFINED, LACK, FORMAT }
     }
 }

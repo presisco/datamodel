@@ -7,10 +7,27 @@ open class ComparableChecker<T>(
         val nullable: Boolean = false,
         val default: Comparable<T> = max
 ) : Checker<Comparable<T>?>() {
-    override fun check(item: Comparable<T>?): Boolean {
-        if (item == null)
-            return nullable
-        return (item >= min as T && item <= max as T)
+    override fun check(item: Comparable<T>?): Pair<Boolean, String> {
+        val isValid: Boolean
+        val message: String
+        if (item == null) {
+            if (nullable) {
+                isValid = true
+                message = ""
+            } else {
+                isValid = false
+                message = "is null"
+            }
+        } else {
+            if (item >= min as T && item <= max as T) {
+                isValid = true
+                message = ""
+            } else {
+                isValid = false
+                message = "not in range"
+            }
+        }
+        return Pair(isValid, message)
     }
 
     override fun trim(item: Comparable<T>?): Comparable<T> {

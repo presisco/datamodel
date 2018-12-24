@@ -1,13 +1,13 @@
 package com.presisco.datamodel.checker
 
 abstract class Checker<T> {
-    abstract fun check(item: T): Boolean
+    abstract fun check(item: T): Pair<Boolean, String>
 
-    fun checkAny(item: Any?): Boolean {
+    fun checkAny(item: Any?): Pair<Boolean, String> {
         return try {
             check(item as T)
         } catch (e: Exception) {
-            false
+            Pair(false, e.message.toString())
         }
     }
 
