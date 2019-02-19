@@ -1,7 +1,7 @@
 package com.presisco.datamodel.checker
 
 open class StringChecker(
-        val size: IntRange,
+        val size: IntRange = 0..Int.MAX_VALUE,
         val nullable: Boolean = false,
         val regexStr: String = "",
         val default: String = ""
